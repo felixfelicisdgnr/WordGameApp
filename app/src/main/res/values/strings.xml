@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WordGameApp</string>
+    <string name="delete">delete</string>
+    <string name="save">save</string>
+</resources>

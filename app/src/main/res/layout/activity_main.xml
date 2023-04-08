@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#B69DE3"
+    tools:context=".MainActivity">
+
+    <GridLayout
+        android:id="@+id/glGameScreen"
+        android:layout_width="400dp"
+        android:layout_height="550dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:columnCount="8"
+        android:rowCount="10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.441">
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B57"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="0" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B58"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B59"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="2" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B60"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B61"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B62"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B63"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="6" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B64"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="7"
+            android:layout_column="7" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B65"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="0" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B66"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B67"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="2" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B68"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B69"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B70"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B71"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="6" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B72"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="8"
+            android:layout_column="7" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B73"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="0" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B74"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="1" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B75"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="2" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B76"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B77"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B78"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B79"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="6" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/B80"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_row="9"
+            android:layout_column="7" />
+
+
+    </GridLayout>
+
+
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="2"
+        android:layout_column="0"
+        android:text="@string/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.861"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
