@@ -18,7 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonList : MutableList<Button>
 
-
+    var word = ""
+    var totalScore = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,13 +32,36 @@ class MainActivity : AppCompatActivity() {
         buttonList = mutableListOf(binding.B57, binding.B58, binding.B59, binding.B60, binding.B61, binding.B62, binding.B63, binding.B64, binding.B65, binding.B66, binding.B66, binding.B67, binding.B68,
         binding.B69, binding.B70, binding.B71, binding.B72, binding.B73, binding.B74, binding.B75, binding.B76, binding.B77, binding.B78, binding.B79, binding.B80)
 
+        //başlangıç düşme animasyon efekti
         for (button in buttonList) {
 
             val animationOne = ObjectAnimator.ofFloat(button, "translationY",-1200f,0f)
-            animationOne.duration = 1700
+            animationOne.duration = 1500
             animationOne.start()
         }
 
+        //harflerin butonlara rastgele dağılması alg.
+        buttonList.shuffle()
+        for (i in buttonList.indices) {
+            buttonList[i].text = letterList[i].value
+        }
+
+        //butonlara tıkladığımda atanacak harfler alg.
+        for (button in buttonList) {
+            button.setOnClickListener {
+                word += button.text //tıklanan butonun harfini kelimeye ekle
+
+                binding.tvCombiningText.text = word //kelimeyi ekranda göstermek için
+            }
+        }
+
+        // Harf-puan hesaplama
+        for (button in buttonList ) {
+            val letter = letterList.find { it.value == button.text }
+            if (letter != null) {
+                totalScore += letter.score
+            }
+        }
 
 
 

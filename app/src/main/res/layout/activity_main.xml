@@ -9,20 +9,22 @@
     android:background="#B69DE3"
     tools:context=".MainActivity">
 
+
     <GridLayout
         android:id="@+id/glGameScreen"
         android:layout_width="400dp"
         android:layout_height="550dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
+        android:layout_marginBottom="75dp"
         android:columnCount="8"
         android:rowCount="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.441">
-
+        app:layout_constraintVertical_bias="0.419">
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -196,8 +198,6 @@
 
     </GridLayout>
 
-
-
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="wrap_content"
@@ -207,10 +207,10 @@
         android:text="@string/delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintVertical_bias="0.879" />
 
     <Button
         android:id="@+id/btnSave"
@@ -221,9 +221,28 @@
         android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.861"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintVertical_bias="0.879" />
+
+    <TextView
+        android:id="@+id/tvCombiningText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/glGameScreen" />
+
+    <TextView
+        android:id="@+id/tvTotalScore"
+        android:layout_width="75dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvCombiningText"
+        app:layout_constraintEnd_toStartOf="@+id/btnSave"
+        app:layout_constraintStart_toEndOf="@+id/btnDelete"
+        app:layout_constraintTop_toBottomOf="@+id/glGameScreen" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
