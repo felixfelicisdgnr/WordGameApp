@@ -1,28 +1,35 @@
 package com.doganur.wordgameapp
 
-import android.animation.ObjectAnimator
-
-import androidx.appcompat.app.AppCompatActivity
+import android.animation.LayoutTransition
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Gravity
-
 import android.view.View
-
+import android.widget.AbsoluteLayout
 import android.widget.Button
 import android.widget.Toast
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
+import androidx.core.view.updateLayoutParams
 import com.doganur.wordgameapp.databinding.ActivityMainBinding
+import java.lang.Exception
+import kotlin.random.Random
 
+
+private const val TOTAL_ROWS = 10
+private const val TOTAL_COLS = 8
+
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var gameLayout: AbsoluteLayout
     private lateinit var binding: ActivityMainBinding
-    private lateinit var startButtonList : MutableList<Button>
-    private lateinit var unvisibleButtonList : MutableList<Button>
-    private lateinit var allButtonList : MutableList<Button>
-
     var word = ""
     var totalScore = 0
+    val buttonRows = arrayOfNulls<Array<Button?>>(TOTAL_ROWS);
+    private val handler = Handler()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,137 +37,223 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        startButtonList = mutableListOf(binding.B57, binding.B58, binding.B59, binding.B60, binding.B61, binding.B62, binding.B63, binding.B64, binding.B65, binding.B66, binding.B66, binding.B67, binding.B68,
-        binding.B69, binding.B70, binding.B71, binding.B72, binding.B73, binding.B74, binding.B75, binding.B76, binding.B77, binding.B78, binding.B79, binding.B80)
-
-        unvisibleButtonList = mutableListOf(binding.B1, binding.B2, binding.B3, binding.B4, binding.B5, binding.B6, binding.B7, binding.B8, binding.B9, binding.B10, binding.B11, binding.B12,binding.B13,
-        binding.B14, binding.B15, binding.B16, binding.B17, binding.B18, binding.B18, binding.B19, binding.B20, binding.B21, binding.B22, binding.B23, binding.B24, binding.B25, binding.B26, binding.B27,
-        binding.B28, binding.B29, binding.B30, binding.B31, binding.B32, binding.B33, binding.B34, binding.B35, binding.B36, binding.B37, binding.B38, binding.B39, binding.B40, binding.B41, binding.B42,
-        binding.B43, binding.B44, binding.B45, binding.B46, binding.B47, binding.B48, binding.B49, binding.B50, binding.B51, binding.B52, binding.B53, binding.B54, binding.B55, binding.B56)
-
-        allButtonList = mutableListOf(binding.B1, binding.B2, binding.B3, binding.B4, binding.B5, binding.B6, binding.B7, binding.B8, binding.B9, binding.B10, binding.B11, binding.B12,binding.B13,
-            binding.B14, binding.B15, binding.B16, binding.B17, binding.B18, binding.B18, binding.B19, binding.B20, binding.B21, binding.B22, binding.B23, binding.B24, binding.B25, binding.B26, binding.B27,
-            binding.B28, binding.B29, binding.B30, binding.B31, binding.B32, binding.B33, binding.B34, binding.B35, binding.B36, binding.B37, binding.B38, binding.B39, binding.B40, binding.B41, binding.B42,
-            binding.B43, binding.B44, binding.B45, binding.B46, binding.B47, binding.B48, binding.B49, binding.B50, binding.B51, binding.B52, binding.B53, binding.B54, binding.B55, binding.B56,binding.B57, binding.B58, binding.B59, binding.B60, binding.B61, binding.B62, binding.B63, binding.B64, binding.B65, binding.B66, binding.B66, binding.B67, binding.B68,
-            binding.B69, binding.B70, binding.B71, binding.B72, binding.B73, binding.B74, binding.B75, binding.B76, binding.B77, binding.B78, binding.B79, binding.B80,)
-
-
-        unvisibleButtonList.forEach { button ->
-            button.visibility = View.INVISIBLE
-        }
-
-        /* Handler().postDelayed({
-            unvisibleButtonList.forEach { button ->
-                button.visibility = View.VISIBLE
-            }
-            for(button in unvisibleButtonList) {
-                val animationTwo = ObjectAnimator.ofFloat(button, "translationY",-1200f,0f)
-                animationTwo.duration = 1700
-                animationTwo.start()
-            }
-        },5000) */
-
-        //başlangıç düşme animasyon efekti
-        for (button in startButtonList) {
-            val animationOne = ObjectAnimator.ofFloat(button, "translationY",-1200f,0f)
-            animationOne.duration = 1500
-            animationOne.start()
-        }
-
-
-        //harflerin butonlara rastgele dağılması alg.
-        startButtonList.shuffle()
-        for (i in startButtonList.indices) {
-            startButtonList[i].text = letterList[i].value
-        }
-
-        // Butonların etkinleştirilmesi ve iptal edilmesi
-        for (button in startButtonList) {
-            button.setOnClickListener {
-                if (button.isEnabled) {
-                    word += button.text.toString()
-                    binding.tvCombiningText.text = word
-
-                    button.isEnabled = false
-
-                }
-            }
-            button.setOnClickListener {
-                if (!button.isEnabled) {
-                    word = word.replace(button.text.toString(), "")
-                    binding.tvCombiningText.text = word
-
-                    button.isEnabled = true
-
-                }
+        gameLayout = binding.glGameScreen;
+        gameLayout.children.forEach {
+            it.visibility = View.INVISIBLE;
+            it.updateLayoutParams {
+                var layoutParams = this as AbsoluteLayout.LayoutParams
+                // animations will start from here
+                layoutParams.y = -500;
             }
         }
-
-        //butonlara tıkladığımda atanacak harfler alg.
-        for (button in startButtonList) {
-            button.setOnClickListener {
-                word += button.text //tıklanan butonun harfini kelimeye ekle
-
-                binding.tvCombiningText.text = word //kelimeyi ekranda göstermek için
-            }
+        gameLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+        gameLayout.layoutTransition.enableTransitionType(LayoutTransition.APPEARING)
+        gameLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGE_APPEARING)
+        gameLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING)
+        gameLayout.layoutTransition.enableTransitionType(LayoutTransition.DISAPPEARING)
+        gameLayout.post {
+            startGame(gameLayout);
         }
 
-        // Butonların etkinleştirilmesi ve iptal edilmesi
-        for (button in startButtonList) {
-            button.setOnClickListener {
-                if (button.isEnabled) {
-                    word += button.text.toString()
-                    binding.tvCombiningText.text = word
+//
 
-                    button.isEnabled = false
-
-                }
-            }
-            button.setOnLongClickListener {
-                if (!button.isEnabled) {
-                    word = word.replace(button.text.toString(), "")
-                    binding.tvCombiningText.text = word
-
-                    button.isEnabled = true
-
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-
-        //onay düğmesi için listener
-        binding.btnSave.setOnClickListener {
-            if ( word.isNotEmpty() && isWordValid(word)) {
-                totalScore += calculateScore(word, letterList)
-
-                resetButtons(allButtonList)
-            } else {
-                val toast = Toast.makeText(this, "Geçersiz kelime.", Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.CENTER, 0, 0)
-                toast.show()
-            }
-        }
-
-        //silme düğmesi için listener
+        handler.postDelayed({
+            dropALetter()
+        }, 5000)
+//
+//        //onay düğmesi için listener
+        binding.btnSave.setOnClickListener { saveWord() }
+//
+//        //silme düğmesi için listener
         binding.btnDelete.setOnClickListener {
             word = ""
             binding.tvCombiningText.text = word
+            resetButtons(false)
+        }
+    }
 
-            resetButtons(allButtonList)
+    private fun dropALetter() {
+        val availableBtns = mutableListOf<Button>()
+        val availableBtnsRowIndecies = mutableListOf<Int>()
+        val availableBtnsColIndecies = mutableListOf<Int>()
+        for (colIndex in 0 until TOTAL_COLS) {
+            for ((index, row) in buttonRows.withIndex()) {
+                val btn = row!![colIndex]
+                if (btn != null && (btn.layoutParams as AbsoluteLayout.LayoutParams).y <= 0) {
+                    availableBtns.add(btn)
+                    availableBtnsColIndecies.add(colIndex)
+                    availableBtnsRowIndecies.add(index)
+                    break
+                }
+            }
+        }
+        if (availableBtns.isEmpty())
+            return
+        val index = Random.nextInt(0, availableBtns.count())
+        updateButtonLocation(
+            availableBtnsRowIndecies[index], availableBtnsColIndecies[index], availableBtns[index]
+        )
+        handler.postDelayed({ dropALetter() }, 5000)
+    }
+
+    private fun saveWord() {
+        if (word.isNotEmpty() && isWordValid(word)) {
+            totalScore += calculateScore(word, letterList)
+            binding.tvTotalScore.text = totalScore.toString();
+            resetButtons(true);
+            hideDisabledButtons();
+            shiftButtons();
+        } else {
+            val toast = Toast.makeText(this, "Geçersiz kelime.", Toast.LENGTH_SHORT)
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
+        }
+    }
+
+    private fun shiftButtons() {
+        try {
+            for (colIndex in 0 until TOTAL_COLS) {
+                val newColButtons = arrayOfNulls<Button>(TOTAL_ROWS);
+                var addIndex = 0;
+                buttonRows.forEach { row ->
+                    val btn = row!![colIndex]
+                    // it's still in the game
+                    if (btn != null && (btn.visibility == View.VISIBLE || btn.isEnabled)) {
+                        newColButtons[addIndex] = btn;
+                        addIndex++
+                    }
+                }
+                for (index in 0 until TOTAL_ROWS) {
+                    val btn = newColButtons[index]
+                    buttonRows[index]!![colIndex] = btn;
+                    if (btn != null && (btn.layoutParams as AbsoluteLayout.LayoutParams).y >= 0) updateButtonLocation(
+                        index,
+                        colIndex,
+                        btn
+                    )
+                }
+                Log.e("TTTTTTTTTTTTTTTT", colIndex.toString())
+            }
+        } catch (e: Exception) {
+            var x = 2;
+            var y = x - 1;
+        }
+    }
+
+
+    private fun hideDisabledButtons() {
+        buttonRows.forEach { row ->
+            row?.forEach { btn ->
+                if (btn != null) {
+                    if (!btn.isEnabled) {
+                        btn.visibility = View.INVISIBLE;
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startGame(layout: AbsoluteLayout) {
+        layoutButtonsAndFillMatrix(layout)
+        showButtons()
+        fillButtonsWithRandomLetters()
+        setClickHandlers()
+    }
+
+    private fun setClickHandlers() {
+        buttonRows.forEach {
+            it!!.forEach {
+                val button = it!!;
+                button.setOnClickListener {
+                    if (button.isEnabled) {
+                        word += button.text.toString()
+                        binding.tvCombiningText.text = word
+                        button.isEnabled = false
+                    }
+                }
+                button.setOnLongClickListener {
+                    if (!button.isEnabled) {
+                        word = word.replace(button.text.toString(), "")
+                        binding.tvCombiningText.text = word
+                        button.isEnabled = true
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fillButtonsWithRandomLetters() {
+        buttonRows.forEach {
+            it!!.forEach {
+                it!!.text = letterList.random().value;
+            }
+        }
+    }
+
+    private fun showButtons() {
+        var delay = 500L;
+        for (row in 0 until TOTAL_ROWS) {
+            buttonRows[row]!!.forEachIndexed { index, it ->
+                it!!.visibility = View.VISIBLE
+                // drop starting buttons
+                if (row <= 2) gameLayout.postDelayed({
+                    updateButtonLocation(row, index, it);
+                }, delay);
+            }
+            delay += 300;
+        }
+    }
+
+    private fun updateButtonLocation(row: Int, col: Int, btn: Button) {
+        btn.postDelayed({
+            btn.updateLayoutParams {
+                val btnWidth = gameLayout.width / TOTAL_COLS;
+                val btnHeight = btnWidth;
+                val lp: AbsoluteLayout.LayoutParams = this as AbsoluteLayout.LayoutParams;
+//            lp.width = btnWidth;
+//            lp.height = btnHeight;
+//            lp.x = col * btnWidth;
+                lp.y =
+                    gameLayout.height - btnHeight - (row * btnHeight); // put it above the game board/hide it
+            }
+        }, 300)
+    }
+
+    private fun layoutButtonsAndFillMatrix(gameLayout: AbsoluteLayout) {
+        val btnWidth = gameLayout.width / 8;
+        val btnHeight = btnWidth;
+        val btnsList = gameLayout.children.toList()
+        var btnIndex = 0;
+        for (row in 0 until TOTAL_ROWS) {
+            buttonRows[row] = arrayOfNulls<Button>(TOTAL_COLS);
+            for (col in 0 until TOTAL_COLS) {
+                val btn = btnsList[btnIndex];
+                btn.updateLayoutParams {
+                    val lp: AbsoluteLayout.LayoutParams = this as AbsoluteLayout.LayoutParams;
+                    lp.width = btnWidth;
+                    lp.height = btnHeight;
+                    lp.x = col * btnWidth;
+                    lp.y = -btnHeight; // put it above the game board
+                }
+                btnIndex++;
+                val button = btn as Button
+                buttonRows[row]!![col] = button
+            }
         }
     }
 
     //geçerli bir kelime olup olmadığını kontrol eden isWordValid fonk.
-    fun isWordValid(word : String) : Boolean {
+    fun isWordValid(word: String): Boolean {
+        val words = listOf("RO", "ME", "KA", "SE")
         //kelimenin geçerliliği kontrol edilir ve sonuç döndürülür
         return true // ya da false
     }
 
     // Oyuncunun oluşturduğu kelimenin puanını hesaplayan calculateScore fonksiyonu
-    fun calculateScore(word: String, letterList : List<LetterData>) : Int {
+    fun calculateScore(word: String, letterList: List<LetterData>): Int {
         var score = 0
         // Kelime harfleri üzerinde döngü oluşturulur ve harf puanları hesaplanır
         for (letter in word) {
@@ -174,32 +267,45 @@ class MainActivity : AppCompatActivity() {
 
 
     //oluşturulan kelimeyi sıfırlayan resetButtons fonk.
-    fun resetButtons(startButtonList: List<Button>) {
+    private fun resetButtons(randomize: Boolean) {
         //tüm butonlar etkinleştirilir ve kelime sıfırlanır
-        for (button in startButtonList) {
-            button.isEnabled = true
+
+        buttonRows.forEach { buttons ->
+            buttons!!.forEach { btn ->
+                if (btn?.visibility == View.VISIBLE) {
+                    // randomize letters
+                    if (!randomize) {
+                        btn.isEnabled = true
+                    } else {
+                        btn.postDelayed({
+                            btn.text = letterList.random().value
+                            btn.isEnabled = true
+                        }, Random.nextLong(100, 1000))
+                    }
+                }
+            }
         }
         word = ""
         //ekran metni değiştirilecek
         binding.tvCombiningText.text = ""
     }
 
-   /* fun checkWord(word: String, allButtonList: List<Button>) {
-        for (letter in word) {
-            val button = allButtonList.find { it.text == letter.toString() }
-            if (button != null) {
-                val index = allButtonList.indexOf(button)
-                allButtonList[index].text = ""
-                allButtonList[index].isEnabled = false
-                if (index < allButtonList.size - 1) {
-                    val nextButton = allButtonList[index + 1]
-                    val animation = ObjectAnimator.ofFloat(nextButton, "translationY", -1200f, 0f)
-                    animation.duration = 1500
-                    animation.start()
-                    allButtonList[index + 1] = button
-                }
-            }
-        }
-    } */
+    /* fun checkWord(word: String, allButtonList: List<Button>) {
+         for (letter in word) {
+             val button = allButtonList.find { it.text == letter.toString() }
+             if (button != null) {
+                 val index = allButtonList.indexOf(button)
+                 allButtonList[index].text = ""
+                 allButtonList[index].isEnabled = false
+                 if (index < allButtonList.size - 1) {
+                     val nextButton = allButtonList[index + 1]
+                     val animation = ObjectAnimator.ofFloat(nextButton, "translationY", -1200f, 0f)
+                     animation.duration = 1500
+                     animation.start()
+                     allButtonList[index + 1] = button
+                 }
+             }
+         }
+     } */
 
 }
