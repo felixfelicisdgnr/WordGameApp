@@ -40,10 +40,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //kelime havuzu kontrolü
         val fs: InputStream = assets.open("kelimeler.txt");
         val r = InputStreamReader(fs);
+
         lines = r.readLines();
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         val view = binding.root
         setContentView(view)
 

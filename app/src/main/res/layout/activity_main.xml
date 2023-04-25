@@ -795,10 +795,11 @@
         android:layout_width="158dp"
         android:layout_height="45dp"
         android:layout_marginTop="16dp"
+        android:hint="@string/scoreee"
         android:text="@string/score"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"
-        android:textAlignment="inherit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
