@@ -25,6 +25,7 @@ private const val TOTAL_COLS = 8
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
+    private var duration: Int = 5
     private lateinit var gameLayout: AbsoluteLayout
     private lateinit var binding: ActivityMainBinding
     var word = ""
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         handler.postDelayed({
             dropALetter()
-        }, 5000)
+        }, duration * 1000L)
 //
 //        //onay düğmesi için listener
         binding.btnSave.setOnClickListener { saveWord() }
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         updateButtonLocation(
             availableBtnsRowIndecies[index], availableBtnsColIndecies[index], availableBtns[index]
         )
-        handler.postDelayed({ dropALetter() }, 5000)
+        handler.postDelayed({ dropALetter() }, duration * 1000L)
     }
 
     private fun saveWord() {
@@ -105,10 +106,23 @@ class MainActivity : AppCompatActivity() {
             hideCheckedButtons();
             resetButtons(false);
             shiftButtons();
+            checkScoreAndTiming();
         } else {
             val toast = Toast.makeText(this, "Geçersiz kelime.", Toast.LENGTH_SHORT)
             toast.setGravity(Gravity.CENTER, 0, 0)
             toast.show()
+        }
+    }
+
+    private fun checkScoreAndTiming() {
+        if (totalScore >= 400) {
+            duration = 1;
+        } else if (totalScore >= 300) {
+            duration = 2;
+        } else if (totalScore >= 200) {
+            duration = 3;
+        } else if (totalScore >= 100) {
+            duration = 4;
         }
     }
 
@@ -163,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setClickHandlers() {
-        buttonRows.forEach { row->
+        buttonRows.forEach { row ->
             row!!.forEach {
                 val button = it!!;
                 button.setOnCheckedChangeListener { compoundButton: CompoundButton, checked: Boolean ->
