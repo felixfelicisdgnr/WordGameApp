@@ -8,7 +8,9 @@ import android.view.Gravity
 import android.view.View
 import android.widget.AbsoluteLayout
 import android.widget.Button
+import android.widget.CompoundButton
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
@@ -27,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     var word = ""
     var totalScore = 0
-    val buttonRows = arrayOfNulls<Array<Button?>>(TOTAL_ROWS);
+    val buttonRows = arrayOfNulls<Array<ToggleButton?>>(TOTAL_ROWS);
     private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dropALetter() {
-        val availableBtns = mutableListOf<Button>()
+        val availableBtns = mutableListOf<ToggleButton>()
         val availableBtnsRowIndecies = mutableListOf<Int>()
         val availableBtnsColIndecies = mutableListOf<Int>()
         for (colIndex in 0 until TOTAL_COLS) {
@@ -100,8 +102,8 @@ class MainActivity : AppCompatActivity() {
         if (word.isNotEmpty() && isWordValid(word)) {
             totalScore += calculateScore(word, letterList)
             binding.tvTotalScore.text = totalScore.toString();
-            resetButtons(true);
-            hideDisabledButtons();
+            hideCheckedButtons();
+            resetButtons(false);
             shiftButtons();
         } else {
             val toast = Toast.makeText(this, "Geçersiz kelime.", Toast.LENGTH_SHORT)
@@ -113,12 +115,12 @@ class MainActivity : AppCompatActivity() {
     private fun shiftButtons() {
         try {
             for (colIndex in 0 until TOTAL_COLS) {
-                val newColButtons = arrayOfNulls<Button>(TOTAL_ROWS);
+                val newColButtons = arrayOfNulls<ToggleButton>(TOTAL_ROWS);
                 var addIndex = 0;
                 buttonRows.forEach { row ->
                     val btn = row!![colIndex]
                     // it's still in the game
-                    if (btn != null && (btn.visibility == View.VISIBLE || btn.isEnabled)) {
+                    if (btn != null && (btn.visibility == View.VISIBLE || !btn.isChecked)) {
                         newColButtons[addIndex] = btn;
                         addIndex++
                     }
@@ -141,11 +143,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun hideDisabledButtons() {
+    private fun hideCheckedButtons() {
         buttonRows.forEach { row ->
             row?.forEach { btn ->
                 if (btn != null) {
-                    if (!btn.isEnabled) {
+                    if (btn.isChecked) {
                         btn.visibility = View.INVISIBLE;
                     }
                 }
@@ -161,24 +163,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setClickHandlers() {
-        buttonRows.forEach {
-            it!!.forEach {
+        buttonRows.forEach { row->
+            row!!.forEach {
                 val button = it!!;
-                button.setOnClickListener {
-                    if (button.isEnabled) {
-                        word += button.text.toString()
+                button.setOnCheckedChangeListener { compoundButton: CompoundButton, checked: Boolean ->
+                    if (checked) {
+                        word += compoundButton.text.toString()
                         binding.tvCombiningText.text = word
-                        button.isEnabled = false
-                    }
-                }
-                button.setOnLongClickListener {
-                    if (!button.isEnabled) {
-                        word = word.replace(button.text.toString(), "")
-                        binding.tvCombiningText.text = word
-                        button.isEnabled = true
-                        true
                     } else {
-                        false
+                        word = word.replaceFirst(compoundButton.text.toString(), "")
+                        binding.tvCombiningText.text = word
                     }
                 }
             }
@@ -186,9 +180,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fillButtonsWithRandomLetters() {
-        buttonRows.forEach {
+        buttonRows.forEach { it ->
             it!!.forEach {
-                it!!.text = letterList.random().value;
+                val value = letterList.random().value
+                it!!.text = value;
+                it.textOn = value;
+                it.textOff = value;
             }
         }
     }
@@ -228,7 +225,7 @@ class MainActivity : AppCompatActivity() {
         val btnsList = gameLayout.children.toList()
         var btnIndex = 0;
         for (row in 0 until TOTAL_ROWS) {
-            buttonRows[row] = arrayOfNulls<Button>(TOTAL_COLS);
+            buttonRows[row] = arrayOfNulls<ToggleButton>(TOTAL_COLS);
             for (col in 0 until TOTAL_COLS) {
                 val btn = btnsList[btnIndex];
                 btn.updateLayoutParams {
@@ -239,7 +236,7 @@ class MainActivity : AppCompatActivity() {
                     lp.y = -btnHeight; // put it above the game board
                 }
                 btnIndex++;
-                val button = btn as Button
+                val button = btn as ToggleButton
                 buttonRows[row]!![col] = button
             }
         }
@@ -275,11 +272,11 @@ class MainActivity : AppCompatActivity() {
                 if (btn?.visibility == View.VISIBLE) {
                     // randomize letters
                     if (!randomize) {
-                        btn.isEnabled = true
+                        btn.isChecked = false
                     } else {
                         btn.postDelayed({
                             btn.text = letterList.random().value
-                            btn.isEnabled = true
+                            btn.isChecked = false
                         }, Random.nextLong(100, 1000))
                     }
                 }
@@ -290,7 +287,7 @@ class MainActivity : AppCompatActivity() {
         binding.tvCombiningText.text = ""
     }
 
-    /* fun checkWord(word: String, allButtonList: List<Button>) {
+    /* fun checkWord(word: String, allButtonList: List<ToggleButton>) {
          for (letter in word) {
              val button = allButtonList.find { it.text == letter.toString() }
              if (button != null) {
