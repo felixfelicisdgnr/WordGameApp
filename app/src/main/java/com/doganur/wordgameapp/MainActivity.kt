@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     var totalScore = 0
     val buttonRows = arrayOfNulls<Array<ToggleButton?>>(TOTAL_ROWS);
     private val handler = Handler()
-
+    private val scoreList = mutableListOf<Int>()
 
     lateinit var lines: List<String>;
 
@@ -112,10 +112,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showGameOver() {
-        val b = AlertDialog.Builder(this)
-        b.setTitle("Game over");
-        b.setMessage("Score : ${binding.tvTotalScore.text}");
-        b.setCancelable(false)
+        val scoreText = binding.tvTotalScore.text as String;
+        val score = scoreText.toInt();
+        scoreList.add(score);
+        var message = "Score: ${scoreText}\nAll Scores"
+        for (score in scoreList.asReversed()){
+            message += "\n$score";
+        }
+        val b = AlertDialog.Builder(this);
+        b.setTitle("Game Over");
+        b.setMessage(message);
+        b.setCancelable(false);
         b.setPositiveButton("Ok") { _: DialogInterface, _: Int ->
             resetGame();
             gameover = false;
