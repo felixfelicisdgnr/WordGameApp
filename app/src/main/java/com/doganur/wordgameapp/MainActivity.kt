@@ -1,30 +1,31 @@
 package com.doganur.wordgameapp
 
 import android.animation.LayoutTransition
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.AbsoluteLayout
-import android.widget.Button
-import android.widget.CompoundButton
-import android.widget.Toast
-import android.widget.ToggleButton
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
 import com.doganur.wordgameapp.databinding.ActivityMainBinding
-import java.lang.Exception
+import java.io.InputStream
+import java.io.InputStreamReader
 import kotlin.random.Random
 
 
-private const val TOTAL_ROWS = 10
+private const val TOTAL_ROWS = 13
 private const val TOTAL_COLS = 8
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
+    private var gameover: Boolean = false
+    private var wrongWords: Int = 0
     private var duration: Int = 5
     private lateinit var gameLayout: AbsoluteLayout
     private lateinit var binding: ActivityMainBinding
@@ -33,13 +34,19 @@ class MainActivity : AppCompatActivity() {
     val buttonRows = arrayOfNulls<Array<ToggleButton?>>(TOTAL_ROWS);
     private val handler = Handler()
 
+
+    lateinit var lines: List<String>;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        val fs: InputStream = assets.open("kelimeler.txt");
+        val r = InputStreamReader(fs);
+        lines = r.readLines();
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
         gameLayout = binding.glGameScreen;
         gameLayout.children.forEach {
             it.visibility = View.INVISIBLE;
@@ -58,16 +65,11 @@ class MainActivity : AppCompatActivity() {
             startGame(gameLayout);
         }
 
-//
 
-        handler.postDelayed({
-            dropALetter()
-        }, duration * 1000L)
-//
-//        //onay düğmesi için listener
+        //onay düğmesi için listener
         binding.btnSave.setOnClickListener { saveWord() }
-//
-//        //silme düğmesi için listener
+
+        //silme düğmesi için listener
         binding.btnDelete.setOnClickListener {
             word = ""
             binding.tvCombiningText.text = word
@@ -93,10 +95,32 @@ class MainActivity : AppCompatActivity() {
         if (availableBtns.isEmpty())
             return
         val index = Random.nextInt(0, availableBtns.count())
-        updateButtonLocation(
+        val newYLocation = updateButtonLocation(
             availableBtnsRowIndecies[index], availableBtnsColIndecies[index], availableBtns[index]
         )
-        handler.postDelayed({ dropALetter() }, duration * 1000L)
+        val btn = availableBtns[index]
+        if (newYLocation < -5 /* yada 75, 100 dene*/) {
+            // game over göster
+            showGameOver()
+        } else if (!gameover)
+            handler.postDelayed({ dropALetter() }, duration * 50L)
+    }
+
+    private fun showGameOver() {
+        val b = AlertDialog.Builder(this)
+        b.setTitle("Game over");
+        b.setMessage("Score : ${binding.tvTotalScore.text}");
+        b.setCancelable(false)
+        b.setPositiveButton("Ok") { _: DialogInterface, _: Int ->
+            resetGame();
+            gameover = false;
+        }
+        b.create().show();
+        gameover = true;
+    }
+
+    private fun resetGame() {
+        startGame(gameLayout);
     }
 
     private fun saveWord() {
@@ -107,10 +131,15 @@ class MainActivity : AppCompatActivity() {
             resetButtons(false);
             shiftButtons();
             checkScoreAndTiming();
+            wrongWords = 0
         } else {
             val toast = Toast.makeText(this, "Geçersiz kelime.", Toast.LENGTH_SHORT)
             toast.setGravity(Gravity.CENTER, 0, 0)
             toast.show()
+            wrongWords += 1;
+        }
+        if (wrongWords >= 3) {
+            showGameOver()
         }
     }
 
@@ -174,6 +203,14 @@ class MainActivity : AppCompatActivity() {
         showButtons()
         fillButtonsWithRandomLetters()
         setClickHandlers()
+        wrongWords = 0
+        duration = 5;
+        totalScore = 0;
+        binding.tvTotalScore.setText("0")
+        word = ""
+        handler.postDelayed({
+            dropALetter()
+        }, duration * 1000L)
     }
 
     private fun setClickHandlers() {
@@ -218,19 +255,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateButtonLocation(row: Int, col: Int, btn: Button) {
+    private fun updateButtonLocation(row: Int, col: Int, btn: Button): Int {
+        val btnWidth = gameLayout.width / TOTAL_COLS;
+        val btnHeight = btnWidth;
+        val yLocation = gameLayout.height - btnHeight - (row * btnHeight)
         btn.postDelayed({
             btn.updateLayoutParams {
-                val btnWidth = gameLayout.width / TOTAL_COLS;
-                val btnHeight = btnWidth;
                 val lp: AbsoluteLayout.LayoutParams = this as AbsoluteLayout.LayoutParams;
-//            lp.width = btnWidth;
-//            lp.height = btnHeight;
-//            lp.x = col * btnWidth;
+
                 lp.y =
-                    gameLayout.height - btnHeight - (row * btnHeight); // put it above the game board/hide it
+                    yLocation; // put it above the game board/hide it
             }
         }, 300)
+        return yLocation;
     }
 
     private fun layoutButtonsAndFillMatrix(gameLayout: AbsoluteLayout) {
@@ -241,7 +278,7 @@ class MainActivity : AppCompatActivity() {
         for (row in 0 until TOTAL_ROWS) {
             buttonRows[row] = arrayOfNulls<ToggleButton>(TOTAL_COLS);
             for (col in 0 until TOTAL_COLS) {
-                val btn = btnsList[btnIndex];
+                val btn: ToggleButton = btnsList[btnIndex] as ToggleButton;
                 btn.updateLayoutParams {
                     val lp: AbsoluteLayout.LayoutParams = this as AbsoluteLayout.LayoutParams;
                     lp.width = btnWidth;
@@ -249,19 +286,18 @@ class MainActivity : AppCompatActivity() {
                     lp.x = col * btnWidth;
                     lp.y = -btnHeight; // put it above the game board
                 }
+                btn.isChecked = false
                 btnIndex++;
-                val button = btn as ToggleButton
-                buttonRows[row]!![col] = button
+                buttonRows[row]!![col] = btn
             }
         }
     }
 
     //geçerli bir kelime olup olmadığını kontrol eden isWordValid fonk.
-    fun isWordValid(word: String): Boolean {
-        val words = listOf("RO", "ME", "KA", "SE")
-        //kelimenin geçerliliği kontrol edilir ve sonuç döndürülür
-        return true // ya da false
+    private fun isWordValid(word: String): Boolean {
+        return lines.contains(word)
     }
+
 
     // Oyuncunun oluşturduğu kelimenin puanını hesaplayan calculateScore fonksiyonu
     fun calculateScore(word: String, letterList: List<LetterData>): Int {
@@ -300,23 +336,5 @@ class MainActivity : AppCompatActivity() {
         //ekran metni değiştirilecek
         binding.tvCombiningText.text = ""
     }
-
-    /* fun checkWord(word: String, allButtonList: List<ToggleButton>) {
-         for (letter in word) {
-             val button = allButtonList.find { it.text == letter.toString() }
-             if (button != null) {
-                 val index = allButtonList.indexOf(button)
-                 allButtonList[index].text = ""
-                 allButtonList[index].isEnabled = false
-                 if (index < allButtonList.size - 1) {
-                     val nextButton = allButtonList[index + 1]
-                     val animation = ObjectAnimator.ofFloat(nextButton, "translationY", -1200f, 0f)
-                     animation.duration = 1500
-                     animation.start()
-                     allButtonList[index + 1] = button
-                 }
-             }
-         }
-     } */
 
 }
