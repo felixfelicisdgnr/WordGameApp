@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity() {
 
 
         //onay düğmesi için listener
-        binding.btnSave.setOnClickListener { saveWord() }
+        binding.btnSave.setOnClickListener {
+            saveWord()
+        }
 
         //silme düğmesi için listener
         binding.btnDelete.setOnClickListener {
@@ -92,8 +94,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         if (availableBtns.isEmpty())
+
             return
+
         val index = Random.nextInt(0, availableBtns.count())
         val newYLocation = updateButtonLocation(
             availableBtnsRowIndecies[index], availableBtnsColIndecies[index], availableBtns[index]
@@ -180,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("TTTTTTTTTTTTTTTT", colIndex.toString())
             }
         } catch (e: Exception) {
-            var x = 2;
+            val x = 2;
             var y = x - 1;
         }
     }
