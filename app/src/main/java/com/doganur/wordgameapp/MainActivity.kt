@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             // game over göster
             showGameOver()
         } else if (!gameover)
-            handler.postDelayed({ dropALetter() }, duration * 50L)
+            handler.postDelayed({ dropALetter() }, duration * 1000L)
     }
 
     private fun showGameOver() {
@@ -245,13 +245,16 @@ class MainActivity : AppCompatActivity() {
     private fun fillButtonsWithRandomLetters() {
         buttonRows.forEach { it ->
             it!!.forEach {
+
                 val value = letterList.random().value
+
                 it!!.text = value;
                 it.textOn = value;
                 it.textOff = value;
             }
         }
     }
+
 
     private fun showButtons() {
         var delay = 500L;
@@ -278,7 +281,7 @@ class MainActivity : AppCompatActivity() {
                 lp.y =
                     yLocation; // put it above the game board/hide it
             }
-        }, 300)
+        }, 1000)
         return yLocation;
     }
 

@@ -797,7 +797,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/score"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textAlignment="inherit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

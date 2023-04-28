@@ -35,3 +35,15 @@ val letterList = listOf(
     LetterData("Z",4)
 )
 
+val letterListTwo = listOf(
+    LetterData("A",1),
+    LetterData("E",1),
+    LetterData("I",2),
+    LetterData("İ",1),
+    LetterData("O",2),
+    LetterData("Ö",7),
+    LetterData("U",2),
+    LetterData("Ü",3),
+
+)
+
